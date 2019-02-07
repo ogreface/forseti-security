@@ -69,6 +69,7 @@ class Instance(resource.Resource):
         self.status = kwargs.get('status')
         self.status_message = kwargs.get('status_message')
         self.tags = kwargs.get('tags')
+        self.labels = kwargs.get('labels')
         self.data = kwargs.get('data')
 
     @classmethod
@@ -104,6 +105,7 @@ class Instance(resource.Resource):
             'status': instance.get('status'),
             'status_message': instance.get('statusMessage'),
             'tags': instance.get('tags'),
+            'labels': instance.get('labels'),
             'data': json.dumps(instance, sort_keys=True),
         }
         return cls(instance_key.name, parent=parent,

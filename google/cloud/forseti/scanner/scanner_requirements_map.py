@@ -66,6 +66,10 @@ REQUIREMENTS_MAP = {
         {'module_name': 'iap_scanner',
          'class_name': 'IapScanner',
          'rules_filename': 'iap_rules.yaml'},
+    'instance_geofencing':
+        {'module_name': 'instance_geofencing_scanner',
+         'class_name': 'InstanceGeofencingScanner',
+         'rules_filename': 'instance_geofencing_rules.yaml'},
     'instance_network_interface':
         {'module_name': 'instance_network_interface_scanner',
          'class_name': 'InstanceNetworkInterfaceScanner',

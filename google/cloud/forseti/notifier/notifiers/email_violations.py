@@ -192,6 +192,8 @@ class EmailViolations(base_notification.BaseNotification):
             sender = self.notification_config['sender']
             recipient = self.notification_config['recipient']
         try:
+            LOGGER.debug(subject)
+            LOGGER.debug(content)
             self.connector.send(email_sender=sender,
                                 email_recipient=recipient,
                                 email_subject=subject,

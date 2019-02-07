@@ -41,6 +41,7 @@ VIOLATION_RESOURCES = {
     'KE_VIOLATION': 'ke_violations',
     'IAM_POLICY_VIOLATION': 'iam_policy_violations',
     'IAP_VIOLATION': 'iap_violations',
+    'INSTANCE_GEOFENCE_VIOLATION': 'instance_geofence_violations',
     'INSTANCE_NETWORK_INTERFACE_VIOLATION': (
         'instance_network_interface_violations'),
     'LIEN_VIOLATION': 'lien_violations',

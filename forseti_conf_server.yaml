@@ -1,0 +1,445 @@
+global:
+
+  # Remove or comment out the email properties if you do not want Forseti to
+  # send email notifications.
+  email_recipient: "rishimalik@google.com"
+  email_sender: "rishimalik@google.com"
+  sendgrid_api_key: "FOOBAR"
+
+##############################################################################
+
+inventory:
+
+  # Root resource to start crawling from, formatted as
+  # <resource_type>/<resource_id>, (e.g. "organizations/12345677890")
+  root_resource_id: organizations/826592752744
+
+  # gsuite access
+  domain_super_admin_email: rishimalik@google.com
+
+  api_quota:
+    # We are not using the max allowed API quota because we wanted to
+    # include some rooms for retries.
+    # Period is in seconds.
+    admin:
+      max_calls: 14
+      period: 1.0
+    appengine:
+      max_calls: 18
+      period: 1.0
+    bigquery:
+      max_calls: 160
+      period: 1.0
+    cloudasset:
+      max_calls: 1
+      period: 1.0
+    cloudbilling:
+      max_calls: 5
+      period: 1.2
+    compute:
+      max_calls: 18
+      period: 1.0
+    container:
+      max_calls: 9
+      period: 1.0
+    crm:
+      max_calls: 4
+      period: 1.2
+    iam:
+      max_calls: 90
+      period: 1.0
+    logging:
+      max_calls: 9
+      period: 1.0
+    securitycenter:
+      max_calls: 1
+      period: 1.1,
+    servicemanagement:
+      max_calls: 2
+      period: 1.1
+    sqladmin:
+      max_calls: 1
+      period: 1.1
+
+  cai:
+    # The FORSETI_CAI_BUCKET needs to be in Forseti project.
+    enabled: True
+    gcs_path: gs://forseti-cai-export-dee30ca
+
+  # Number of days to retain inventory data:
+  #  -1 : (default) keep all previous data forever
+  #   0 : delete all previous inventory data before running
+  retention_days: -1
+
+##############################################################################
+
+scanner:
+
+  # Output path (do not include filename).
+  # If GCS location, the format of the path should be:
+  # gs://bucket-name/path/for/output
+  output_path: gs://forseti-server-dee30ca/scanner_violations
+
+  # Rules path (do not include filename).
+  # If GCS location, the format of the path should be:
+  # gs://bucket-name/path/for/rules_path
+  # if no rules_path is specified, rules are
+  # searched in /path/to/forseti_security/rules/
+  rules_path: /Users/rishimalik/code/forseti-security/rules
+
+  # Enable the scanners as default to true when integrated for Forseti 2.0.
+
+  scanners:
+  - name: instance_geofencing
+    enabled: true
+
+##############################################################################
+
+notifier:
+
+  # For every resource type you can set up a notification pipeline
+  # to send alerts for every violation found
+  resources:
+  - resource: iam_policy_violations
+    should_notify: true
+    notifiers:
+    # Email violations
+    - name: email_violations
+      configuration:
+        data_format: csv
+        sendgrid_api_key: ""
+        sender: ""
+        recipient: ""
+    # Upload violations to GCS.
+    - name: gcs_violations
+      configuration:
+        data_format: csv
+        # gcs_path should begin with "gs://"
+        gcs_path: gs://forseti-server-dee30ca/scanner_violations
+    # Slack webhook pipeline.
+    # Create an incoming webhook in your organization's Slack setting, located at:
+    # https://[your_org].slack.com/apps/manage/custom-integrations
+    # Add the provided URL in the configuration below in `webhook_url`.
+    - name: slack_webhook
+      configuration:
+        data_format: json  # slack only supports json
+        webhook_url: ''
+
+  - resource: audit_logging_violations
+    should_notify: true
+    notifiers:
+    # Email violations
+    - name: email_violations
+      configuration:
+        sendgrid_api_key: ""
+        sender: ""
+        recipient: ""
+    # Upload violations to GCS.
+    - name: gcs_violations
+      configuration:
+        data_format: csv
+        # gcs_path should begin with "gs://"
+        gcs_path: gs://forseti-server-dee30ca/scanner_violations
+
+  - resource: blacklist_violations
+    should_notify: true
+    notifiers:
+    # Email violations
+    - name: email_violations
+      configuration:
+        sendgrid_api_key: ""
+        sender: ""
+        recipient: ""
+    # Upload violations to GCS.
+    - name: gcs_violations
+      configuration:
+        data_format: csv
+        # gcs_path should begin with "gs://"
+        gcs_path: gs://forseti-server-dee30ca/scanner_violations
+
+  - resource: bigquery_acl_violations
+    should_notify: true
+    notifiers:
+    # Email violations
+    - name: email_violations
+      configuration:
+        sendgrid_api_key: ""
+        sender: ""
+        recipient: ""
+    # Upload violations to GCS.
+    - name: gcs_violations
+      configuration:
+        data_format: csv
+        # gcs_path should begin with "gs://"
+        gcs_path: gs://forseti-server-dee30ca/scanner_violations
+
+  - resource: buckets_acl_violations
+    should_notify: true
+    notifiers:
+    # Email violations
+    - name: email_violations
+      configuration:
+        sendgrid_api_key: ""
+        sender: ""
+        recipient: ""
+    # Upload violations to GCS.
+    - name: gcs_violations
+      configuration:
+        data_format: csv
+        # gcs_path should begin with "gs://"
+        gcs_path: gs://forseti-server-dee30ca/scanner_violations
+
+  - resource: cloudsql_acl_violations
+    should_notify: true
+    notifiers:
+    # Email violations
+    - name: email_violations
+      configuration:
+        sendgrid_api_key: ""
+        sender: ""
+        recipient: ""
+    # Upload violations to GCS.
+    - name: gcs_violations
+      configuration:
+        data_format: csv
+        # gcs_path should begin with "gs://"
+        gcs_path: gs://forseti-server-dee30ca/scanner_violations
+
+  - resource: enabled_apis_violations
+    should_notify: true
+    notifiers:
+    # Email violations
+    - name: email_violations
+      configuration:
+        sendgrid_api_key: ""
+        sender: ""
+        recipient: ""
+    # Upload violations to GCS.
+    - name: gcs_violations
+      configuration:
+        data_format: csv
+        # gcs_path should begin with "gs://"
+        gcs_path: gs://forseti-server-dee30ca/scanner_violations
+
+  - resource: firewall_rule_violations
+    should_notify: true
+    notifiers:
+    # Email violations
+    - name: email_violations
+      configuration:
+        sendgrid_api_key: ""
+        sender: ""
+        recipient: ""
+    # Upload violations to GCS.
+    - name: gcs_violations
+      configuration:
+        data_format: csv
+        # gcs_path should begin with "gs://"
+        gcs_path: gs://forseti-server-dee30ca/scanner_violations
+
+  - resource: forwarding_rule_violations
+    should_notify: true
+    notifiers:
+    # Email violations
+    - name: email_violations
+      configuration:
+        sendgrid_api_key: ""
+        sender: ""
+        recipient: ""
+    # Upload violations to GCS.
+    - name: gcs_violations
+      configuration:
+        data_format: csv
+        # gcs_path should begin with "gs://"
+        gcs_path: gs://forseti-server-dee30ca/scanner_violations
+
+  - resource: ke_version_violations
+    should_notify: true
+    notifiers:
+    # Email violations
+    - name: email_violations
+      configuration:
+        sendgrid_api_key: ""
+        sender: ""
+        recipient: ""
+    # Upload violations to GCS.
+    - name: gcs_violations
+      configuration:
+        data_format: csv
+        # gcs_path should begin with "gs://"
+        gcs_path: gs://forseti-server-dee30ca/scanner_violations
+
+  - resource: ke_violations
+    should_notify: true
+    notifiers:
+    # Email violations
+    - name: email_violations
+      configuration:
+        sendgrid_api_key: ""
+        sender: ""
+        recipient: ""
+    # Upload violations to GCS.
+    - name: gcs_violations
+      configuration:
+        data_format: csv
+        # gcs_path should begin with "gs://"
+        gcs_path: gs://forseti-server-dee30ca/scanner_violations
+
+  - resource: groups_violations
+    should_notify: true
+    notifiers:
+    # Email violations
+    - name: email_violations
+      configuration:
+        sendgrid_api_key: ""
+        sender: ""
+        recipient: ""
+    # Upload violations to GCS.
+    - name: gcs_violations
+      configuration:
+        data_format: csv
+        # gcs_path should begin with "gs://"
+        gcs_path: gs://forseti-server-dee30ca/scanner_violations
+
+  - resource: instance_network_interface_violations
+    should_notify: true
+    notifiers:
+    # Email violations
+    - name: email_violations
+      configuration:
+        sendgrid_api_key: ""
+        sender: ""
+        recipient: ""
+    # Upload violations to GCS.
+    - name: gcs_violations
+      configuration:
+        data_format: csv
+        # gcs_path should begin with "gs://"
+        gcs_path: gs://forseti-server-dee30ca/scanner_violations
+
+  - resource: instance_geofence_violations
+    should_notify: true
+    notifiers:
+    # Email violations
+    - name: email_violations
+      configuration:
+        recipient: "rishimalik@google.com"
+        sender: "noreply@example.com"
+        sendgrid_api_key: "FOOBAR"
+    # Upload violations to GCS.
+    - name: gcs_violations
+      configuration:
+        data_format: csv
+        # gcs_path should begin with "gs://"
+        gcs_path: gs://forseti-server-dee30ca/scanner_violations
+
+
+  - resource: iap_violations
+    should_notify: true
+    notifiers:
+    # Email violations
+    - name: email_violations
+      configuration:
+        sendgrid_api_key: ""
+        sender: ""
+        recipient: ""
+    # Upload violations to GCS.
+    - name: gcs_violations
+      configuration:
+        data_format: csv
+        # gcs_path should begin with "gs://"
+        gcs_path: gs://forseti-server-dee30ca/scanner_violations
+
+  - resource: lien_violations
+    should_notify: true
+    notifiers:
+    # Email violations
+    - name: email_violations
+      configuration:
+        sendgrid_api_key: ""
+        sender: ""
+        recipient: ""
+    # Upload violations to GCS.
+    - name: gcs_violations
+      configuration:
+        data_format: csv
+        # gcs_path should begin with "gs://"
+        gcs_path: gs://forseti-server-dee30ca/scanner_violations
+
+  - resource: location_violations
+    should_notify: true
+    notifiers:
+    # Email violations
+    - name: email_violations
+      configuration:
+        sendgrid_api_key: ""
+        sender: ""
+        recipient: ""
+    # Upload violations to GCS.
+    - name: gcs_violations
+      configuration:
+        data_format: csv
+        # gcs_path should begin with "gs://"
+        gcs_path: gs://forseti-server-dee30ca/scanner_violations
+
+  - resource: log_sink_violations
+    should_notify: true
+    notifiers:
+    # Email violations
+    - name: email_violations
+      configuration:
+        sendgrid_api_key: ""
+        sender: ""
+        recipient: ""
+    # Upload violations to GCS.
+    - name: gcs_violations
+      configuration:
+        data_format: csv
+        # gcs_path should begin with "gs://"
+        gcs_path: gs://forseti-server-dee30ca/scanner_violations
+
+  - resource: service_account_key_violations
+    should_notify: true
+    notifiers:
+    # Email violations
+    - name: email_violations
+      configuration:
+        sendgrid_api_key: "FOOBAR"
+        sender: "rishimalik@google.com"
+        recipient: "rishimalik@google.com"
+    # Upload violations to GCS.
+    - name: gcs_violations
+      configuration:
+        data_format: csv
+        # gcs_path should begin with "gs://"
+        gcs_path: gs://forseti-server-dee30ca/scanner_violations
+
+
+  violation:
+    cscc:
+      enabled: false
+      mode: api
+      # Alpha API
+      organization_id: organizations/826592752744
+      # gcs_path should begin with "gs://"
+      gcs_path:
+      # Beta API
+      # Cloud SCC Beta API uses a new source_id.  It is unique per
+      # organization and must be generated via a self-registration process.
+      # If source_id is used, then it will activate the Beta API,
+      # and the Beta API will take precedence over the Alpha API.
+      # The format is: organizations/ORG_ID/sources/SOURCE_ID
+      source_id:
+
+  inventory:
+    gcs_summary:
+      enabled: true
+      # data_format may be one of: csv (the default) or json
+      data_format: csv
+      # gcs_path should begin with "gs://"
+      gcs_path: gs://forseti-server-dee30ca/inventory_summary
+    email_summary:
+      enabled: true
+      recipient: "rishimalik@google.com"
+      sender: "noreply@example.com"
+      sendgrid_api_key: "FOOBAR"
